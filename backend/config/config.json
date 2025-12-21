@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "root",
+    "password": "yourpassword",
+    "database": "task_manager",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}
