@@ -2,9 +2,11 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 
 class Category extends Model {
-  public id!: number;
-  public name!: string;
-  public userId!: number;
+  declare id: number;
+  declare name: string;
+  declare userId: number;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 Category.init(
@@ -15,7 +17,7 @@ Category.init(
       primaryKey: true,
     },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     userId: {
@@ -26,6 +28,8 @@ Category.init(
   {
     sequelize,
     modelName: "Category",
+    tableName: "Categories",
+    timestamps: true,
   }
 );
 

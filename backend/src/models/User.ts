@@ -3,10 +3,12 @@ import sequelize from "../config/database";
 import bcrypt from "bcryptjs";
 
 class User extends Model {
-  public id!: number;
-  public username!: string;
-  public email!: string;
-  public password!: string;
+  declare id: number;
+  declare username: string;
+  declare email: string;
+  declare password: string;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 
   async validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
@@ -21,23 +23,25 @@ User.init(
       primaryKey: true,
     },
     username: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       unique: true,
       allowNull: false,
     },
     email: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       unique: true,
       allowNull: false,
     },
     password: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
   },
   {
     sequelize,
     modelName: "User",
+    tableName: "Users",
+    timestamps: true,
     hooks: {
       beforeCreate: async (user: User) => {
         user.password = await bcrypt.hash(user.password, 10);

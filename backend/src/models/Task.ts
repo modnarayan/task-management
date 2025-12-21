@@ -2,14 +2,16 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 
 class Task extends Model {
-  public id!: number;
-  public title!: string;
-  public description?: string;
-  public status!: "Pending" | "In Progress" | "Completed";
-  public priority!: "low" | "medium" | "high";
-  public dueDate?: Date;
-  public categoryId?: number;
-  public userId!: number;
+  declare id: number;
+  declare title: string;
+  declare description?: string;
+  declare status: "Pending" | "In Progress" | "Completed";
+  declare priority: "low" | "medium" | "high";
+  declare dueDate?: Date;
+  declare categoryId?: number;
+  declare userId: number;
+  declare createdAt: Date;
+  declare updatedAt: Date;
 }
 
 Task.init(
@@ -20,10 +22,12 @@ Task.init(
       primaryKey: true,
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
-    description: DataTypes.TEXT,
+    description: {
+      type: DataTypes.TEXT,
+    },
     status: {
       type: DataTypes.ENUM("Pending", "In Progress", "Completed"),
       defaultValue: "Pending",
@@ -32,8 +36,13 @@ Task.init(
       type: DataTypes.ENUM("low", "medium", "high"),
       defaultValue: "medium",
     },
-    dueDate: DataTypes.DATE,
-    categoryId: DataTypes.INTEGER,
+    dueDate: {
+      type: DataTypes.DATE,
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -42,6 +51,8 @@ Task.init(
   {
     sequelize,
     modelName: "Task",
+    tableName: "Tasks",
+    timestamps: true,
   }
 );
 
