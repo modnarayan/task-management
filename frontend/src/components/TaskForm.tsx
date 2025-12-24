@@ -1,7 +1,7 @@
 "use client";
 
 import { Form, Input, Select, DatePicker, Button, Modal, message } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Category, Task } from "@/types";
 import dayjs from "dayjs";
 import api from "@/lib/api";
@@ -29,6 +29,22 @@ const TaskForm = ({
   const [categoryInput, setCategoryInput] = useState("");
   const [creatingCategory, setCreatingCategory] = useState(false);
 
+  // Reset form when modal opens or initialValues change
+  useEffect(() => {
+    if (open) {
+      if (initialValues) {
+        form.setFieldsValue({
+          ...initialValues,
+          dueDate: initialValues.dueDate
+            ? dayjs(initialValues.dueDate)
+            : undefined,
+        });
+      } else {
+        form.resetFields();
+      }
+    }
+  }, [open, initialValues, form]);
+
   const handleCreateCategory = async () => {
     if (!categoryInput.trim()) {
       message.error("Please enter a category name");
@@ -50,28 +66,27 @@ const TaskForm = ({
     }
   };
 
+  const handleClose = () => {
+    form.resetFields();
+    setCategoryInput("");
+    onClose();
+  };
+
   return (
     <Modal
       title={initialValues ? "Edit Task" : "Add Task"}
       open={open}
-      onCancel={onClose}
+      onCancel={handleClose}
       footer={null}
       className="p-4"
     >
       <Form
         form={form}
         layout="vertical"
-        initialValues={
-          initialValues
-            ? {
-                ...initialValues,
-                dueDate: initialValues.dueDate
-                  ? dayjs(initialValues.dueDate)
-                  : undefined,
-              }
-            : undefined
-        }
-        onFinish={onSubmit}
+        onFinish={() => {
+          onSubmit(form.getFieldsValue());
+          form.resetFields();
+        }}
       >
         <Form.Item name="title" label="Title" rules={[{ required: true }]}>
           <Input />
@@ -134,7 +149,7 @@ const TaskForm = ({
           <Button type="primary" htmlType="submit" className="mr-2">
             {initialValues ? "Update" : "Create"}
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={handleClose}>Cancel</Button>
         </Form.Item>
       </Form>
     </Modal>
